@@ -1,0 +1,25 @@
+services:
+  api:
+    build: .
+    container_name: bank-recs-api
+    ports:
+      - "8000:8000"
+    environment:
+      - MODEL_PATH=/app/models/model.joblib
+      - TOP_K=7
+    volumes:
+      - ./models:/app/models:ro
+
+  mlflow:
+    build: .
+    container_name: bank-recs-mlflow
+    command: >
+      mlflow server
+      --backend-store-uri sqlite:////app/mlflow.db
+      --default-artifact-root /app/mlruns
+      --host 0.0.0.0
+      --port 5000
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./mlruns:/app/mlruns
